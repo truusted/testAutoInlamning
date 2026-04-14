@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "C:\\Users\\JohnP\\IdeaProjects\\testAuto\\src\\test\\java\\inlamning\\Steps\\Features\\Features.feature",
-        glue = "com.basketballengland.steps",
+        features = "src\\test\\java\\inlamning\\Steps\\Features\\Features.feature",
+        glue = "inlamning.Steps.Steps",
         plugin = {
                 "pretty",
                 "html:target/cucumber-report.html",

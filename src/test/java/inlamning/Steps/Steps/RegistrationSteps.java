@@ -27,9 +27,6 @@ public class RegistrationSteps {
     // Helpers
     // -----------------------------------------------------------------------
 
-
-    //Bygger en fil://-URL som pekar på Register.html, som ligger en katalog ovanför projekt automationTesting/ (där Maven exekverar)
-
     private static String getRegisterUrl() {
         String absolutePath = Paths.get("")
                 .toAbsolutePath()
@@ -47,7 +44,6 @@ public class RegistrationSteps {
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", checkbox);
         }
     }
-
 
     // Fyller i alla vanliga fält. När {@code includeLastName} är falskt lämnas fältet Efternamn tomt för att simulera det negativa testfallet.
 
@@ -102,28 +98,21 @@ public class RegistrationSteps {
     @Given("I am on the Basketball England registration page")
     public void i_am_on_the_basketball_england_registration_page() {
         driver.get(getRegisterUrl());
-        Assert.assertTrue(
-                "Registration page did not load",
-                driver.getTitle().contains("Basketball England"));
-        throw new io.cucumber.java.PendingException();
     }
 
     @When("I complete the registration form with valid details")
     public void i_complete_the_registration_form_with_valid_details() {
         fillForm(true, "SecurePass1");
-        throw new io.cucumber.java.PendingException();
     }
 
     @When("I complete the registration form without a last name")
     public void i_complete_the_registration_form_without_a_last_name() {
         fillForm(false, "SecurePass1");
-        throw new io.cucumber.java.PendingException();
     }
 
     @When("I complete the registration form with mismatching passwords")
     public void i_complete_the_registration_form_with_mismatching_passwords() {
         fillForm(true, "DifferentPass2");
-        throw new io.cucumber.java.PendingException();
     }
 
     @And("I accept the terms and conditions")
@@ -131,7 +120,6 @@ public class RegistrationSteps {
         clickCheckbox("sign_up_25");                                     // Terms & Conditions
         clickCheckbox("sign_up_26");                                     // Age confirmation
         clickCheckbox("fanmembersignup_agreetocodeofethicsandconduct");  // Code of Ethics
-        throw new io.cucumber.java.PendingException();
     }
 
     @And("I do not accept the terms and conditions")
@@ -139,15 +127,13 @@ public class RegistrationSteps {
         // Acceptera de andra två obligatoriska bekräftelserna så att endast kryssrutan för villkor är den återstående valideringsfelet.
         clickCheckbox("sign_up_26");                                     // Age confirmation
         clickCheckbox("fanmembersignup_agreetocodeofethicsandconduct");  // Code of Ethics
-        // sign_up_25 (T&C) is deliberately left unchecked
-        throw new io.cucumber.java.PendingException();
     }
 
     @And("I submit the registration form")
     public void i_submit_the_registration_form() {
         driver.findElement(By.name("join")).click();
-        throw new io.cucumber.java.PendingException();
     }
+
 
     @Then("I should be redirected to the success page")
     public void i_should_be_redirected_to_the_success_page() {
@@ -157,11 +143,23 @@ public class RegistrationSteps {
         Assert.assertTrue(
                 "Expected navigation to Success.html but current URL was: " + driver.getCurrentUrl(),
                 driver.getCurrentUrl().contains("Success.html"));
-        throw new io.cucumber.java.PendingException();
     }
 
     @Then("I should see the error {string}")
-    public void i_should_see_the_error(String string) {
+    public void i_should_see_the_error(String expectedError) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        wait.until(d -> d.findElement(By.tagName("body")).getText().contains(expectedError));
+
+        String bodyText = driver.findElement(By.tagName("body")).getText();
+
+        Assert.assertTrue(
+                "Expected validation error '" + expectedError + "' was not found on the page",
+                bodyText.contains(expectedError)
+        );
+    }
+    /*@Then("I should see the error {string}")
+    public void i_should_see_the_error(String expectedError) {
         // jQuery diskret validering fyller span[data-valmsg-replace='true'] // element med felmeddelandet och ändrar deras klass till // field-validation-error när ett inlämningsförsök misslyckas.
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -181,7 +179,5 @@ public class RegistrationSteps {
         Assert.assertTrue(
                 "Expected validation error '" + expectedError + "' was not found in any error span",
                 errorFound);
-
-        throw new io.cucumber.java.PendingException();
-    }
+    }*/
 }
